@@ -6,9 +6,9 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public abstract class AbstractShellCommand implements ShellCommand {
-	
+
 	private ProcessBuilder processBuilder;
-	
+
 	private synchronized ProcessBuilder getProcessBuilder() {
 		if (processBuilder == null) {
 			processBuilder = new ProcessBuilder().command(getCommandAndArguments());
@@ -24,26 +24,26 @@ public abstract class AbstractShellCommand implements ShellCommand {
 		}
 		return processBuilder;
 	}
-	
+
 	@Override
 	public String toString() {
 		return getCommandAndArguments().toString();
 	}
-	
+
 	@Override
 	public boolean equals(Object other) {
 		if (other == this) {
 			return true;
 		}
-		
-		if (! (other instanceof ShellCommand )) {
+
+		if (!(other instanceof ShellCommand)) {
 			return false;
 		}
-		
+
 		ShellCommand that = (ShellCommand) other;
 		return Objects.equals(this.getCommandAndArguments(), that.getCommandAndArguments());
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(getName(), getCommandAndArguments());

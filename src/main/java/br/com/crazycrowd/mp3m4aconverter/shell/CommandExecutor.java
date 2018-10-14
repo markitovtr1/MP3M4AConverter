@@ -4,15 +4,19 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Singleton;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@Singleton
 public class CommandExecutor {
 
 	private final Long waitTimeoutSeconds;
 
+	@Inject
 	public CommandExecutor(@Named("shellCommandsWaitSeconds") Long waitTimeoutSeconds) {
 		this.waitTimeoutSeconds = waitTimeoutSeconds;
 	}

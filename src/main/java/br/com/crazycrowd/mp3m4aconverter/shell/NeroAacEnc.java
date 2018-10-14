@@ -1,5 +1,6 @@
 package br.com.crazycrowd.mp3m4aconverter.shell;
 
+import java.lang.ProcessBuilder.Redirect;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -40,6 +41,12 @@ public class NeroAacEnc extends AbstractShellCommand {
 		}
 
 		this.commandAndArguments = commandAndArgumentsBuilder.build();
+	}
+	
+	@Override
+	public ProcessBuilder build() {
+		// FIX: for some reason, neroAacEnc gets stucked without this.
+		return super.build().redirectError(Redirect.INHERIT);
 	}
 
 	@Override
