@@ -42,7 +42,7 @@ public class NeroAacEnc extends AbstractShellCommand {
 
 		this.commandAndArguments = commandAndArgumentsBuilder.build();
 	}
-	
+
 	@Override
 	public ProcessBuilder build() {
 		// FIX: for some reason, neroAacEnc gets stucked without this.

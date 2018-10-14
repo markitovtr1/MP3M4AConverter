@@ -18,7 +18,7 @@ public abstract class AbstractShellCommand implements ShellCommand {
 
 	@Override
 	public ProcessBuilder build() {
-		log.trace("Building process for command {}", getName());
+		log.trace("Creating process builder for command {}", getName());
 		if (processBuilder == null) {
 			return getProcessBuilder();
 		}
