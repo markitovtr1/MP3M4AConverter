@@ -24,7 +24,7 @@ public class CommandExecutorTest {
 	private static final Long WAIT_TIMEOUT_SECONDS = 1l;
 	
 	private static final List<String> INSTANT_COMMAND = ImmutableList.of("cmd.exe", "/c", "dir");
-	private static final List<String> LONG_COMMAND = ImmutableList.of("cmd.exe", "/c", "timeout", "2");
+	private static final List<String> LONG_COMMAND = ImmutableList.of("ping", "localhost");
 	private static final List<String> EXIT_COMMAND = ImmutableList.of("cmd.exe", "/c", "exit", "1");
 	
 	@Mock
