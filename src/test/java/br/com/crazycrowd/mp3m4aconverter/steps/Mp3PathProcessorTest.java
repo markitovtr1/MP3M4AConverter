@@ -7,7 +7,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -15,25 +14,21 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import br.com.crazycrowd.mp3m4aconverter.shell.CommandExecutor;
 import br.com.crazycrowd.mp3m4aconverter.shell.Ffmpeg;
 import br.com.crazycrowd.mp3m4aconverter.shell.NeroAacEnc;
 import br.com.crazycrowd.mp3m4aconverter.shell.ShellCommand;
 import br.com.crazycrowd.mp3m4aconverter.utils.FileExtension;
+import br.com.crazycrowd.mp3m4aconverter.utils.FileHelper;
 import br.com.crazycrowd.mp3m4aconverter.utils.TagWriter;
 
 /**
  *
  * @author marcos.romero
  */
-@RunWith(PowerMockRunner.class)
-@PowerMockIgnore("javax.management.*")
-@PrepareForTest({ Mp3PathProcessor.class })
+@RunWith(MockitoJUnitRunner.class)
 public class Mp3PathProcessorTest {
 
 	private static final Path PARENT_PATH = Paths.get("C:");
@@ -48,20 +43,23 @@ public class Mp3PathProcessorTest {
 	@Mock
 	private TagWriter tagWriterMock;
 
+	@Mock
+	private FileHelper fileHelperMock;
+
 	private Mp3PathProcessor processor;
 
 	@Before
 	public void setUp() throws Exception {
-		PowerMockito.mockStatic(Files.class);
+		when(fileHelperMock.deleteIfExists(any(Path.class))).thenReturn(true);
 		doNothing().when(commandExecutorMock).execute(buildExpectedFfmpegObject(), buildExpectedNeroAacObject());
 		doNothing().when(tagWriterMock).addArtwork(SAMPLE_MP3_PATH, SAMPLE_ARTWORK_PATH);
 		doNothing().when(tagWriterMock).copyTags(SAMPLE_MP3_PATH, SAMPLE_M4A_PATH);
-		processor = new Mp3PathProcessor(commandExecutorMock, tagWriterMock);
+		processor = new Mp3PathProcessor(fileHelperMock, commandExecutorMock, tagWriterMock);
 	}
 
 	@Test
 	public void test_whenM4AFileExists_nothingIsDone() throws Exception {
-		when(Files.exists(SAMPLE_M4A_PATH)).thenReturn(Boolean.TRUE);
+		when(fileHelperMock.exists(SAMPLE_M4A_PATH)).thenReturn(Boolean.TRUE);
 
 		processor.process(SAMPLE_MP3_PATH);
 
@@ -72,8 +70,8 @@ public class Mp3PathProcessorTest {
 
 	@Test
 	public void test_whenM4AFileDoesntExistAndArtworkExists_convertAndCopyTagsAndAddArtwork() throws Exception {
-		when(Files.exists(SAMPLE_M4A_PATH)).thenReturn(Boolean.FALSE);
-		when(Files.exists(SAMPLE_ARTWORK_PATH)).thenReturn(Boolean.TRUE);
+		when(fileHelperMock.exists(SAMPLE_M4A_PATH)).thenReturn(Boolean.FALSE);
+		when(fileHelperMock.exists(SAMPLE_ARTWORK_PATH)).thenReturn(Boolean.TRUE);
 
 		processor.process(SAMPLE_MP3_PATH);
 
@@ -85,8 +83,8 @@ public class Mp3PathProcessorTest {
 
 	@Test
 	public void test_whenM4AFileDoesntExistAndArtworkDoesntExist_convertAndCopyTagsOnly() throws Exception {
-		when(Files.exists(SAMPLE_M4A_PATH)).thenReturn(Boolean.FALSE);
-		when(Files.exists(SAMPLE_ARTWORK_PATH)).thenReturn(Boolean.FALSE);
+		when(fileHelperMock.exists(SAMPLE_M4A_PATH)).thenReturn(Boolean.FALSE);
+		when(fileHelperMock.exists(SAMPLE_ARTWORK_PATH)).thenReturn(Boolean.FALSE);
 
 		processor.process(SAMPLE_MP3_PATH);
 

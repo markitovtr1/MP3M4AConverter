@@ -24,7 +24,6 @@ import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.KeyNotFoundException;
 import org.jaudiotagger.tag.Tag;
 import org.jaudiotagger.tag.TagException;
-import org.jaudiotagger.tag.datatype.Artwork;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +41,7 @@ public class TagWriter {
 
 	private final List<FieldKey> supportedTags;
 	private final AudioFileIO audioFileIO;
+	private final ArtworkHelper artworkHelper;
 
 	/**
 	 * Adds artwork to an audio
@@ -56,7 +56,7 @@ public class TagWriter {
 			File file = audioPath.toFile();
 			AudioFile audioFile = audioFileIO.readFile(file);
 			Tag tag = audioFile.getTag();
-			tag.setField(Artwork.createArtworkFromFile(artworkPath.toFile()));
+			tag.setField(artworkHelper.createArtworkFromFile(artworkPath));
 			audioFileIO.writeFile(audioFile);
 		} catch (TagException | ReadOnlyFileException | CannotReadException | CannotWriteException
 				| InvalidAudioFrameException e) {

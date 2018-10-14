@@ -1,7 +1,6 @@
 package br.com.crazycrowd.mp3m4aconverter.steps;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.TimeoutException;
 
@@ -12,6 +11,7 @@ import br.com.crazycrowd.mp3m4aconverter.shell.CommandExecutor;
 import br.com.crazycrowd.mp3m4aconverter.shell.Ffmpeg;
 import br.com.crazycrowd.mp3m4aconverter.shell.NeroAacEnc;
 import br.com.crazycrowd.mp3m4aconverter.utils.FileExtension;
+import br.com.crazycrowd.mp3m4aconverter.utils.FileHelper;
 import br.com.crazycrowd.mp3m4aconverter.utils.PathUtils;
 import br.com.crazycrowd.mp3m4aconverter.utils.TagWriter;
 import lombok.RequiredArgsConstructor;
@@ -29,13 +29,14 @@ public class Mp3PathProcessor implements PathProcessor {
 
 	private static final String ARTWORK_PATH = "folder.jpg";
 
+	private final FileHelper fileHelper;
 	private final CommandExecutor commandExecutor;
 	private final TagWriter tagWriter;
 
 	@Override
 	public void process(Path mp3AudioPath) throws IOException, InterruptedException, TimeoutException {
 		log.debug("Processing MP3 file {}", mp3AudioPath);
-		if (!Files.exists(PathUtils.changeFileExtension(mp3AudioPath, FileExtension.M4A))) {
+		if (!fileHelper.exists(PathUtils.changeFileExtension(mp3AudioPath, FileExtension.M4A))) {
 			try {
 				Path tmpWavPath = PathUtils.changeFileExtension(mp3AudioPath, FileExtension.WAVE);
 				Path m4aPath = PathUtils.changeFileExtension(tmpWavPath, FileExtension.M4A);
@@ -45,14 +46,14 @@ public class Mp3PathProcessor implements PathProcessor {
 				tagWriter.copyTags(mp3AudioPath, m4aPath);
 
 				Path artworkPath = mp3AudioPath.getParent().resolve(ARTWORK_PATH);
-				if (Files.exists(artworkPath)) {
+				if (fileHelper.exists(artworkPath)) {
 					tagWriter.addArtwork(m4aPath, artworkPath);
 				} else {
 					log.warn("No artwork found on path {}. Skipping addArtwork for file {}", artworkPath, mp3AudioPath);
 				}
 				log.debug("File {} processed. Output on {}", mp3AudioPath, m4aPath);
 			} finally {
-				Files.deleteIfExists(PathUtils.changeFileExtension(mp3AudioPath, FileExtension.WAVE));
+				fileHelper.deleteIfExists(PathUtils.changeFileExtension(mp3AudioPath, FileExtension.WAVE));
 			}
 		} else {
 			log.debug("File {} not processed. M4A file already exists.", mp3AudioPath);
