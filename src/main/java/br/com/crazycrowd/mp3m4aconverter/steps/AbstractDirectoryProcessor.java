@@ -1,15 +1,12 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.com.crazycrowd.mp3m4aconverter.steps;
 
-import br.com.crazycrowd.mp3m4aconverter.utils.FileExtension;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.concurrent.TimeoutException;
 import java.util.stream.Stream;
+
+import br.com.crazycrowd.mp3m4aconverter.utils.FileExtension;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -39,7 +36,7 @@ public abstract class AbstractDirectoryProcessor implements PathProcessor {
 	private void processMp3AudioPath(Path mp3AudioPath) {
 		try {
 			mp3PathProcessor.process(mp3AudioPath);
-		} catch (IOException | InterruptedException e) {
+		} catch (IOException | InterruptedException | TimeoutException e) {
 			log.error("Error while processing file {}", mp3AudioPath, e);
 		}
 	}

@@ -1,19 +1,19 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.com.crazycrowd.mp3m4aconverter.steps;
 
-import br.com.crazycrowd.mp3m4aconverter.utils.FileExtension;
-import br.com.crazycrowd.mp3m4aconverter.utils.PathUtils;
-import br.com.crazycrowd.mp3m4aconverter.utils.ShellCommands;
-import br.com.crazycrowd.mp3m4aconverter.utils.TagWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.concurrent.TimeoutException;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
+
+import br.com.crazycrowd.mp3m4aconverter.shell.CommandExecutor;
+import br.com.crazycrowd.mp3m4aconverter.shell.Ffmpeg;
+import br.com.crazycrowd.mp3m4aconverter.shell.NeroAacEnc;
+import br.com.crazycrowd.mp3m4aconverter.utils.FileExtension;
+import br.com.crazycrowd.mp3m4aconverter.utils.PathUtils;
+import br.com.crazycrowd.mp3m4aconverter.utils.TagWriter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,16 +29,19 @@ public class Mp3PathProcessor implements PathProcessor {
 
 	private static final String ARTWORK_PATH = "folder.jpg";
 
-	private final ShellCommands shellCommands;
+	private final CommandExecutor commandExecutor;
 	private final TagWriter tagWriter;
 
 	@Override
-	public void process(Path mp3AudioPath) throws IOException, InterruptedException {
+	public void process(Path mp3AudioPath) throws IOException, InterruptedException, TimeoutException {
 		log.debug("Processing MP3 file {}", mp3AudioPath);
 		if (!Files.exists(PathUtils.changeFileExtension(mp3AudioPath, FileExtension.M4A))) {
 			try {
-				Path wavPath = shellCommands.ffmpeg(mp3AudioPath);
-				Path m4aPath = shellCommands.neroAacEnc(wavPath);
+				Path tmpWavPath = PathUtils.changeFileExtension(mp3AudioPath, FileExtension.WAVE);
+				Path m4aPath = PathUtils.changeFileExtension(tmpWavPath, FileExtension.M4A);
+				Ffmpeg ffmpeg = new Ffmpeg(mp3AudioPath, tmpWavPath, FileExtension.WAVE.getExtension());
+				NeroAacEnc neroAacEnc = new NeroAacEnc(tmpWavPath, m4aPath, true);
+				commandExecutor.execute(ffmpeg, neroAacEnc);
 				tagWriter.copyTags(mp3AudioPath, m4aPath);
 
 				Path artworkPath = mp3AudioPath.getParent().resolve(ARTWORK_PATH);
