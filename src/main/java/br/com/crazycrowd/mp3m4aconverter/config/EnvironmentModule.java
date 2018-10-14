@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.com.crazycrowd.mp3m4aconverter.config;
 
 import java.util.List;
@@ -12,6 +7,7 @@ import javax.inject.Named;
 import org.jaudiotagger.audio.AudioFileIO;
 import org.jaudiotagger.tag.FieldKey;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -27,6 +23,13 @@ import br.com.crazycrowd.mp3m4aconverter.steps.RecursiveDirectoryProcessor;
  */
 public class EnvironmentModule extends AbstractModule {
 
+	@VisibleForTesting
+	static final String SHELL_COMMANDS_WAIT_SECONDS_PROPERTY = "SHELL_COMMANDS_WAIT_SECONDS";
+	
+	@VisibleForTesting
+	static final Long DEFAULT_WAIT_SECONDS = 30L;
+	
+
 	@Override
 	protected void configure() {
 
@@ -36,11 +39,11 @@ public class EnvironmentModule extends AbstractModule {
 	@Singleton
 	@Named("shellCommandsWaitSeconds")
 	public Long shellCommandsWaitSeconds() {
-		String shellCommandsWaitSeconds = System.getenv("SHELL_COMMANDS_WAIT_SECONDS");
+		String shellCommandsWaitSeconds = System.getProperty(SHELL_COMMANDS_WAIT_SECONDS_PROPERTY);
 		try {
 			return Long.parseLong(shellCommandsWaitSeconds);
 		} catch (NullPointerException | NumberFormatException ex) {
-			return 30L;
+			return DEFAULT_WAIT_SECONDS;
 		}
 	}
 
