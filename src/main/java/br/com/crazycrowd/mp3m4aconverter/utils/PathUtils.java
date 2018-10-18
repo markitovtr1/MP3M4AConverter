@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.com.crazycrowd.mp3m4aconverter.utils;
 
 import com.google.common.io.Files;
@@ -24,8 +19,7 @@ public class PathUtils {
 	 */
 	public static Path changeFileExtension(Path filePath, FileExtension extension) {
 		String fileNameWithoutExtension = Files.getNameWithoutExtension(filePath.getFileName().toString());
-		Path parentDirectory = filePath.getParent();
-		return parentDirectory.resolve(fileNameWithoutExtension + "." + extension.getExtension());
+		return filePath.resolveSibling(fileNameWithoutExtension + "." + extension.getExtension());
 	}
 	
 }

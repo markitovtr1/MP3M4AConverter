@@ -8,7 +8,7 @@ import org.junit.Test;
 public class StartPointTest {
 
 	private static final Path TEST_FILE = Paths.get("pom.xml");
-	private static final Path TEST_DIRECTORY = Paths.get("src");
+	private static final Path TEST_DIRECTORY = Paths.get("src", "test", "resources", "noAudio");
 
 	@Test(expected = IllegalArgumentException.class)
 	public void test_whenNoArgsIsPassed_IllegalArgumentExceptionIsThrown() throws Exception {

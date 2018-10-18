@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.com.crazycrowd.mp3m4aconverter.utils;
 
 import java.io.File;
@@ -96,8 +91,8 @@ public class TagWriter {
 		try {
 			destTag.setField(fieldKey, sourceTag.getFirst(fieldKey));
 		} catch (KeyNotFoundException | FieldDataInvalidException e) {
-			log.error("Error while copying tag field {} between source {} and dest {} tags", fieldKey, sourceTag,
-					destTag, e);
+			log.warn("Error while copying tag field {} between source {} and dest {} tags. Moving on.", fieldKey,
+					sourceTag, destTag, e);
 		}
 	}
 

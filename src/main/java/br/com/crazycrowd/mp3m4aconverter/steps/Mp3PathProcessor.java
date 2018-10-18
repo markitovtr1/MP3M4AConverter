@@ -34,7 +34,7 @@ public class Mp3PathProcessor implements PathProcessor {
 	private final TagWriter tagWriter;
 
 	@Override
-	public void process(Path mp3AudioPath) throws IOException, InterruptedException, TimeoutException {
+	public void process(Path mp3AudioPath) throws IOException, InterruptedException, TimeoutException { 
 		log.debug("Processing MP3 file {}", mp3AudioPath);
 		if (!fileHelper.exists(PathUtils.changeFileExtension(mp3AudioPath, FileExtension.M4A))) {
 			try {

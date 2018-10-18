@@ -8,6 +8,4 @@ public interface ShellCommand {
 
 	List<String> getCommandAndArguments();
 
-	ProcessBuilder build();
-
 }

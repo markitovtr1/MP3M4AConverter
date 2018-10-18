@@ -5,12 +5,10 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
 
-@Getter
-public class Ffmpeg extends AbstractShellCommand {
+public class Ffmpeg implements ShellCommand {
 
 	private static final String COMMAND = "ffmpeg";
 
@@ -23,9 +21,9 @@ public class Ffmpeg extends AbstractShellCommand {
 	@NonNull
 	private final String outputFormat;
 
+	@Getter
 	private final List<String> commandAndArguments;
 
-	@Builder
 	public Ffmpeg(Path inputFilePath, Path outputFilePath, String outputFormat) {
 		this.inputFilePath = inputFilePath;
 		this.outputFilePath = outputFilePath;

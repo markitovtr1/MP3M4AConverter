@@ -15,16 +15,19 @@ import lombok.extern.slf4j.Slf4j;
 public class CommandExecutor {
 
 	private final Long waitTimeoutSeconds;
+	private final ShellCommandBuilder commandBuilder;
 
 	@Inject
-	public CommandExecutor(@Named("shellCommandsWaitSeconds") Long waitTimeoutSeconds) {
+	public CommandExecutor(@Named("shellCommandsWaitSeconds") Long waitTimeoutSeconds,
+			ShellCommandBuilder commandBuilder) {
 		this.waitTimeoutSeconds = waitTimeoutSeconds;
+		this.commandBuilder = commandBuilder;
 	}
 
 	public void execute(ShellCommand command) throws IOException, InterruptedException, TimeoutException {
 		log.debug("Starting execution of command {}", command);
 
-		Process process = command.build().start();
+		Process process = commandBuilder.build(command).start();
 		boolean ended = process.waitFor(waitTimeoutSeconds, TimeUnit.SECONDS);
 
 		if (!ended) {

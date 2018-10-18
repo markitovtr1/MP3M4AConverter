@@ -1,17 +1,14 @@
 package br.com.crazycrowd.mp3m4aconverter.shell;
 
-import java.lang.ProcessBuilder.Redirect;
 import java.nio.file.Path;
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
 
-@Getter
-public class NeroAacEnc extends AbstractShellCommand {
+public class NeroAacEnc implements ShellCommand {
 
 	private static final String COMMAND = "neroAacEnc";
 
@@ -23,9 +20,9 @@ public class NeroAacEnc extends AbstractShellCommand {
 
 	private final Boolean ignoreLength;
 
+	@Getter
 	private final List<String> commandAndArguments;
-
-	@Builder
+	
 	public NeroAacEnc(Path inputFilePath, Path outputFilePath, Boolean ignoreLength) {
 		this.inputFilePath = inputFilePath;
 		this.outputFilePath = outputFilePath;
@@ -36,17 +33,11 @@ public class NeroAacEnc extends AbstractShellCommand {
 				.add("-if").add(inputFilePath.toAbsolutePath().toString()) //
 				.add("-of").add(outputFilePath.toAbsolutePath().toString());
 
-		if (Boolean.TRUE.equals(ignoreLength)) {
+		if (Boolean.TRUE.equals(this.ignoreLength)) {
 			commandAndArgumentsBuilder.add("-ignorelength");
 		}
 
 		this.commandAndArguments = commandAndArgumentsBuilder.build();
-	}
-
-	@Override
-	public ProcessBuilder build() {
-		// FIX: for some reason, neroAacEnc gets stucked without this.
-		return super.build().redirectError(Redirect.INHERIT);
 	}
 
 	@Override

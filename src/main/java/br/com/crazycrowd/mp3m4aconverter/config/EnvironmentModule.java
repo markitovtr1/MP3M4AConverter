@@ -13,9 +13,11 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 
+import br.com.crazycrowd.mp3m4aconverter.steps.DirectoryProcessor;
+import br.com.crazycrowd.mp3m4aconverter.steps.DirectoryRecursiveListStrategy;
 import br.com.crazycrowd.mp3m4aconverter.steps.Mp3PathProcessor;
 import br.com.crazycrowd.mp3m4aconverter.steps.PathProcessor;
-import br.com.crazycrowd.mp3m4aconverter.steps.RecursiveDirectoryProcessor;
+import br.com.crazycrowd.mp3m4aconverter.utils.FileHelper;
 
 /**
  *
@@ -25,10 +27,9 @@ public class EnvironmentModule extends AbstractModule {
 
 	@VisibleForTesting
 	static final String SHELL_COMMANDS_WAIT_SECONDS_PROPERTY = "SHELL_COMMANDS_WAIT_SECONDS";
-	
+
 	@VisibleForTesting
 	static final Long DEFAULT_WAIT_SECONDS = 30L;
-	
 
 	@Override
 	protected void configure() {
@@ -49,8 +50,8 @@ public class EnvironmentModule extends AbstractModule {
 
 	@Provides
 	@Singleton
-	public PathProcessor fileProcessor(Mp3PathProcessor mp3PathProcessor) {
-		return new RecursiveDirectoryProcessor(mp3PathProcessor);
+	public PathProcessor fileProcessor(FileHelper fileHelper, Mp3PathProcessor mp3PathProcessor) {
+		return new DirectoryProcessor(fileHelper, mp3PathProcessor, new DirectoryRecursiveListStrategy());
 	}
 
 	@Provides
